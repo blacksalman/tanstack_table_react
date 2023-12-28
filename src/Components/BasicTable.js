@@ -10,6 +10,7 @@ import {
 import { useQuery} from '@tanstack/react-query'
 
 import axios from 'axios';
+import Filter from '../utilities/Filter';
 
 function BasicTable() {
 
@@ -26,7 +27,6 @@ function BasicTable() {
                     "languages": ((typeof user?.languages === 'object' && user?.languages !== null) && Array.isArray(Object.values(user?.languages))) ? Object.values(user?.languages) : '---'
                 }}
             );
-            console.log('response', response);
             return response;
         } catch (error) {
             console.log('error', error);
@@ -34,7 +34,7 @@ function BasicTable() {
     }
 
 
-    const {data, isLoading} = useQuery({ queryKey: ['contryData'], queryFn: fetchCountryData})
+    const {data, isLoading} = useQuery({ queryKey: ['contryData'], queryFn: fetchCountryData});
 
 
    // Columns: name (common), capital (only first one), region, population, languages (comma separated)
@@ -42,28 +42,39 @@ function BasicTable() {
     const columns = [
         {
             header: 'Name 🔃',
-            accessorKey: "name"
+            accessorKey: "name",
+            Filter: "Filter",
+            enableColumnFilter: true,
+            enableSorting: true
         },
         {
             header: 'Capital',
-            accessorKey: "capital"
+            accessorKey: "capital",
+            enableColumnFilter: false,
+            enableSorting: false
         },
         {
             header: 'Region',
-            accessorKey: "region"
+            accessorKey: "region",
+            enableColumnFilter: false,
+            enableSorting: false
         },
         {
             header: 'Population 🔃',
-            accessorKey: "population"
+            accessorKey: "population",
+            enableColumnFilter: false,
+            enableSorting: true
         },
         {
             header: 'Languages',
-            accessorKey: "languages"
+            accessorKey: "languages",
+            enableColumnFilter: false,
+            enableSorting: false
         },
     ]
 
     const [sorting, setSorting] = useState([])
-    const [filtering, setFiltering] = useState("")
+    // const [filtering, setFiltering] = useState("")
 
     const table = useReactTable({
         data, 
@@ -74,33 +85,35 @@ function BasicTable() {
         getSortedRowModel: getSortedRowModel(),
         state: {
             sorting: sorting,
-            globalFilter: filtering
+            // globalFilter: filtering
         },
         onSortingChange: setSorting,
-        onGlobalFilterChange: setFiltering
+        // onGlobalFilterChange: setFiltering
     })
   return (
     <div className='w3-container'>
         {isLoading ? <h1>Loading...</h1> :
         <>
-            <input
-            type='text'
-            value={filtering}
-            onChange={(e)=> setFiltering(e.target.value)}
-            placeholder='Search country name... '
-            />
             <table className='w3-table-all'>
                 <thead>
                     {table.getHeaderGroups().map(headerGroup => (
                         <tr key={headerGroup.id}>
                             {headerGroup.headers.map(header=>(
                             <th key={header.id} onClick={header.column.getToggleSortingHandler()}>
+                            {/* // <th key={header.id}> */}
                                 {header.isPlaceholder ? null : (
                                 <div>
                                     { flexRender(header.column.columnDef.header, header.getContext())}
+                                    {header.column.getCanFilter() ? (
+                                        <div>
+                                            <Filter column={header.column}/>
+                                        </div>
+                                        ) : null
+                                    }
                                     {
                                         {asc: '', desc: ''}[header.column.getIsSorted() ?? null]
                                     }
+                                  
                                 </div> 
                                 )}
                             </th>
