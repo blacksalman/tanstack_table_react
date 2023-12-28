@@ -131,7 +131,7 @@ function BasicTable() {
                         table.setPageSize(Number(e.target.value))
                     }}
                     >
-                    {[15, 50, 100].map(pageSize => (
+                    {[10, 15, 50, 100].map(pageSize => (
                         <option key={pageSize} value={pageSize}>
                         Show {pageSize}
                         </option>
