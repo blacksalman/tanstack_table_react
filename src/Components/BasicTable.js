@@ -22,7 +22,7 @@ function BasicTable() {
                     "name": user?.name?.common || null,
                     "capital": (user?.capital !== null && Array.isArray(user?.capital)) ? user?.capital[0] : '---',
                     "region": user?.region || null,
-                    "population": user?.population || null,
+                    "population": user?.population || '---',
                     "languages": ((typeof user?.languages === 'object' && user?.languages !== null) && Array.isArray(Object.values(user?.languages))) ? Object.values(user?.languages) : '---'
                 }}
             );
@@ -41,7 +41,7 @@ function BasicTable() {
     
     const columns = [
         {
-            header: 'Name',
+            header: 'Name 🔃',
             accessorKey: "name"
         },
         {
@@ -53,7 +53,7 @@ function BasicTable() {
             accessorKey: "region"
         },
         {
-            header: 'Population',
+            header: 'Population 🔃',
             accessorKey: "population"
         },
         {
@@ -99,7 +99,7 @@ function BasicTable() {
                                 <div>
                                     { flexRender(header.column.columnDef.header, header.getContext())}
                                     {
-                                        {asc: '⬆️', desc: '⬇️'}[header.column.getIsSorted() ?? null]
+                                        {asc: '', desc: ''}[header.column.getIsSorted() ?? null]
                                     }
                                 </div> 
                                 )}
@@ -125,6 +125,18 @@ function BasicTable() {
                 <button disabled={!table.getCanPreviousPage()} onClick={()=> table.previousPage()}>Previos Page</button>
                 <button disabled={!table.getCanNextPage()} onClick={()=> table.nextPage()}>Next Page</button>
                 <button onClick={()=> table.setPageIndex(table.getPageCount() -1)}>Last Page</button>
+                <select
+                    value={table.getState().pagination.pageSize}
+                    onChange={e => {
+                        table.setPageSize(Number(e.target.value))
+                    }}
+                    >
+                    {[10, 20, 30, 40, 50].map(pageSize => (
+                        <option key={pageSize} value={pageSize}>
+                        Show {pageSize}
+                        </option>
+                    ))}
+                </select>
             </div>
         </>}
     </div>
